@@ -1,40 +1,33 @@
 package com.revature.assignforce.assignforcefilehandlerservice.controller;
 
+import com.amazonaws.services.s3.model.S3Object;
 import com.revature.assignforce.assignforcefilehandlerservice.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 
 @RestController
 public class FileController {
-
-    private FileService fileService;
-
     @Autowired
-    public void FileController(FileService fileService) {
-        this.fileService = fileService;
-    }
-
-
+    private FileService fileService;
 
     /**
      * returns key for the uploaded file
      * @return
      */
     @PostMapping("/")
-    public String addFile(@RequestBody File file) {
-        return fileService.save(file);
+    public String addFile(@RequestBody File file, @RequestBody String key) {
+        return fileService.save(file, key);
     }
 
-    public File getFile(String key) {
+    @GetMapping("/")
+    public S3Object getFile(@RequestParam(value="key") String key) {
         return fileService.get(key);
     }
 
-    public void deleteFile(String key) {
+    @DeleteMapping("/")
+    public void deleteFile(@RequestParam(value="key") String key) {
         fileService.delete(key);
     }
 }
