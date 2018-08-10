@@ -171,3 +171,6 @@ JDBC/target/
 /dist/
 /nbdist/
 /.nb-gradle/
+
+### custom .gitignores ###
+/testCoverageInfo/
