@@ -1,0 +1,233 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: FileServiceTest</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.revature.assignforce.assignforcefilehandlerservice.service</a> ]
+</div>
+
+<h1>Coverage Summary for Class: FileServiceTest (com.revature.assignforce.assignforcefilehandlerservice.service)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FileServiceTest</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (31/ 31)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">FileServiceTest$FileServiceTestConfiguration</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/ 3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">FileServiceTest$FileServiceTestConfiguration$$EnhancerBySpringCGLIB$$8f762a35</td>
+  </tr>
+  <tr>
+    <td class="name">FileServiceTest$FileServiceTestConfiguration$$EnhancerBySpringCGLIB$$8f762a35$$FastClassBySpringCGLIB$$7aeb022e</td>
+  </tr>
+  <tr>
+    <td class="name">FileServiceTest$FileServiceTestConfiguration$$FastClassBySpringCGLIB$$f1a61449</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (34/ 34)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.revature.assignforce.assignforcefilehandlerservice.service;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.amazonaws.services.s3.model.S3Object;
+<i>4</i>&nbsp;import io.findify.s3mock.S3Mock;
+<i>5</i>&nbsp;import org.apache.commons.io.FileUtils;
+<i>6</i>&nbsp;import org.junit.After;
+<i>7</i>&nbsp;import org.junit.Assert;
+<i>8</i>&nbsp;import org.junit.Before;
+<i>9</i>&nbsp;import org.junit.Test;
+<i>10</i>&nbsp;import org.junit.runner.RunWith;
+<i>11</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>12</i>&nbsp;import org.springframework.boot.test.context.SpringBootTest;
+<i>13</i>&nbsp;import org.springframework.context.annotation.Bean;
+<i>14</i>&nbsp;import org.springframework.context.annotation.Configuration;
+<i>15</i>&nbsp;import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;import java.io.File;
+<i>18</i>&nbsp;import java.io.IOException;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;@RunWith(SpringJUnit4ClassRunner.class)
+<i>21</i>&nbsp;@SpringBootTest
+<b class="fc"><i>22</i>&nbsp;public class FileServiceTest {</b>
+<i>23</i>&nbsp;    @Configuration
+<b class="fc"><i>24</i>&nbsp;    static class FileServiceTestConfiguration {</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;        @Bean
+<i>27</i>&nbsp;        public FileService fileServiceMock() {
+<b class="fc"><i>28</i>&nbsp;            return new FileService();</b>
+<i>29</i>&nbsp;        }
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;        @Bean
+<i>32</i>&nbsp;        public S3Mock mockServer() {
+<b class="fc"><i>33</i>&nbsp;            return new S3Mock.Builder().withPort(8181).withInMemoryBackend().build();</b>
+<i>34</i>&nbsp;        }
+<i>35</i>&nbsp;    }
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    @Autowired
+<i>38</i>&nbsp;    private FileService fileService;
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    @Autowired
+<i>41</i>&nbsp;    private S3Mock mockServer;
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    @Before
+<i>44</i>&nbsp;    public void init() {
+<i>45</i>&nbsp;        // create mock s3 server with s3mock
+<b class="fc"><i>46</i>&nbsp;        mockServer = new S3Mock.Builder().withPort(8765).withInMemoryBackend().build();</b>
+<b class="fc"><i>47</i>&nbsp;        mockServer.start();</b>
+<b class="fc"><i>48</i>&nbsp;    }</b>
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    @Test
+<i>51</i>&nbsp;    public void shouldUploadFile() throws IOException {
+<i>52</i>&nbsp;        //create file to upload
+<b class="fc"><i>53</i>&nbsp;        File file = File.createTempFile(&quot;test&quot;,&quot;.tmp&quot;);</b>
+<b class="fc"><i>54</i>&nbsp;        String key = fileService.save(file,&quot;test&quot;);</b>
+<b class="fc"><i>55</i>&nbsp;        Assert.assertEquals(&quot;test&quot;, key);</b>
+<b class="fc"><i>56</i>&nbsp;    }</b>
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    @Test
+<i>59</i>&nbsp;    public void shouldGetFileFromKey() throws IOException {
+<i>60</i>&nbsp;        //create file to upload
+<b class="fc"><i>61</i>&nbsp;        File file = File.createTempFile(&quot;test&quot;,&quot;.tmp&quot;);</b>
+<i>62</i>&nbsp;        //use fileService to add file to bucket
+<b class="fc"><i>63</i>&nbsp;        fileService.save(file,&quot;test&quot;);</b>
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;        //retrieve file from bucket using key
+<b class="fc"><i>66</i>&nbsp;        S3Object object = fileService.get(&quot;test&quot;);</b>
+<b class="fc"><i>67</i>&nbsp;        File file2 = new File(&quot;resources/testFile.txt&quot;);</b>
+<i>68</i>&nbsp;
+<b class="fc"><i>69</i>&nbsp;        FileUtils.copyInputStreamToFile(object.getObjectContent(),file2);</b>
+<i>70</i>&nbsp;
+<b class="fc"><i>71</i>&nbsp;        Assert.assertTrue(FileUtils.contentEquals(file,file2));</b>
+<b class="fc"><i>72</i>&nbsp;    }</b>
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;    @Test
+<i>75</i>&nbsp;    public void shouldReturnNullWhenUsingWrongKey() throws IOException {
+<i>76</i>&nbsp;        //create file to upload
+<b class="fc"><i>77</i>&nbsp;        File file = File.createTempFile(&quot;test&quot;,&quot;.tmp&quot;);</b>
+<i>78</i>&nbsp;        //add file to bucket
+<b class="fc"><i>79</i>&nbsp;        fileService.save(file, &quot;test&quot;);</b>
+<i>80</i>&nbsp;
+<b class="fc"><i>81</i>&nbsp;        Assert.assertNull(fileService.get(&quot;someKey&quot;));</b>
+<b class="fc"><i>82</i>&nbsp;    }</b>
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;    @Test
+<i>85</i>&nbsp;    public void shouldDeleteFileFromKey() throws IOException {
+<i>86</i>&nbsp;        //create file to upload
+<b class="fc"><i>87</i>&nbsp;        File file = File.createTempFile(&quot;test&quot;,&quot;.tmp&quot;);</b>
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;        //use fileService to add file to bucket
+<b class="fc"><i>90</i>&nbsp;        String key = fileService.save(file, &quot;test&quot;);</b>
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;        //delete file from bucket
+<b class="fc"><i>93</i>&nbsp;        int result = fileService.delete(key);</b>
+<i>94</i>&nbsp;
+<b class="fc"><i>95</i>&nbsp;        Assert.assertEquals(1, result);</b>
+<b class="fc"><i>96</i>&nbsp;    }</b>
+<i>97</i>&nbsp;
+<i>98</i>&nbsp;    @Test
+<i>99</i>&nbsp;    public void shouldReturnZeroWhenDeletingFileThatDoesNotExist() throws IOException {
+<i>100</i>&nbsp;        //create file and save file to establish bucket
+<b class="fc"><i>101</i>&nbsp;        File file = File.createTempFile(&quot;test&quot;,&quot;.tmp&quot;);</b>
+<b class="fc"><i>102</i>&nbsp;        fileService.save(file, &quot;test&quot;);</b>
+<i>103</i>&nbsp;
+<i>104</i>&nbsp;        //delete file that doesn&#39;t exist in bucket
+<b class="fc"><i>105</i>&nbsp;        int result = fileService.delete(&quot;someKey&quot;);</b>
+<i>106</i>&nbsp;
+<b class="fc"><i>107</i>&nbsp;        Assert.assertEquals(0, result);</b>
+<b class="fc"><i>108</i>&nbsp;    }</b>
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;    @After
+<i>111</i>&nbsp;    public void deinit() {
+<i>112</i>&nbsp;        // shutdown s3mock
+<b class="fc"><i>113</i>&nbsp;        mockServer.stop();</b>
+<b class="fc"><i>114</i>&nbsp;    }</b>
+<i>115</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2018-08-09 16:09</div>
+</div>
+</body>
+</html>

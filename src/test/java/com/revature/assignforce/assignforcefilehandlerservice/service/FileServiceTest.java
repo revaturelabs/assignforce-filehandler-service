@@ -45,8 +45,6 @@ public class FileServiceTest {
         // create mock s3 server with s3mock
         mockServer = new S3Mock.Builder().withPort(8765).withInMemoryBackend().build();
         mockServer.start();
-
-
     }
 
     @Test
@@ -66,7 +64,7 @@ public class FileServiceTest {
 
         //retrieve file from bucket using key
         S3Object object = fileService.get("test");
-        File file2 = new File("testFile.txt");
+        File file2 = new File("resources/testFile.txt");
 
         FileUtils.copyInputStreamToFile(object.getObjectContent(),file2);
 

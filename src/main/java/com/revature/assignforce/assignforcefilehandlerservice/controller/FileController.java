@@ -27,7 +27,7 @@ public class FileController {
     }
 
     @DeleteMapping("/")
-    public void deleteFile(@RequestParam(value="key") String key) {
-        fileService.delete(key);
+    public int deleteFile(@RequestParam(value="key") String key) {
+        return fileService.delete(key);
     }
 }
