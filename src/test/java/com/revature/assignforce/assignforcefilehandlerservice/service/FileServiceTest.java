@@ -10,27 +10,23 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.File;
 import java.io.IOException;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest
 public class FileServiceTest {
-    @Configuration
+
+    @TestConfiguration
     static class FileServiceTestConfiguration {
 
         @Bean
-        public FileService fileServiceMock() {
-            return new FileService();
-        }
-
-        @Bean
         public S3Mock mockServer() {
-            return new S3Mock.Builder().withPort(8181).withInMemoryBackend().build();
+            return new S3Mock.Builder().withPort(8765).withInMemoryBackend().build();
         }
     }
 
@@ -43,7 +39,6 @@ public class FileServiceTest {
     @Before
     public void init() {
         // create mock s3 server with s3mock
-        mockServer = new S3Mock.Builder().withPort(8765).withInMemoryBackend().build();
         mockServer.start();
     }
 
@@ -56,7 +51,7 @@ public class FileServiceTest {
     }
 
     @Test
-    public void shouldGetFileFromKey() throws IOException {
+    public void shouldReturnTestFileWhenGettingFileWithKey() throws IOException {
         //create file to upload
         File file = File.createTempFile("test",".tmp");
         //use fileService to add file to bucket
@@ -72,7 +67,7 @@ public class FileServiceTest {
     }
 
     @Test
-    public void shouldReturnNullWhenUsingWrongKey() throws IOException {
+    public void shouldReturnNullWhenGettingFileWithInvalidKey() throws IOException {
         //create file to upload
         File file = File.createTempFile("test",".tmp");
         //add file to bucket
@@ -82,7 +77,7 @@ public class FileServiceTest {
     }
 
     @Test
-    public void shouldDeleteFileFromKey() throws IOException {
+    public void shouldReturnTrueWhenDeletingFileWithKey() throws IOException {
         //create file to upload
         File file = File.createTempFile("test",".tmp");
 
@@ -90,21 +85,21 @@ public class FileServiceTest {
         String key = fileService.save(file, "test");
 
         //delete file from bucket
-        int result = fileService.delete(key);
+        boolean result = fileService.delete(key);
 
-        Assert.assertEquals(1, result);
+        Assert.assertTrue("should return true when delete is successful", result);
     }
 
     @Test
-    public void shouldReturnZeroWhenDeletingFileThatDoesNotExist() throws IOException {
+    public void shouldReturnFalseWhenDeletingFileWithInvalidKey() throws IOException {
         //create file and save file to establish bucket
         File file = File.createTempFile("test",".tmp");
         fileService.save(file, "test");
 
         //delete file that doesn't exist in bucket
-        int result = fileService.delete("someKey");
+        boolean result = fileService.delete("someKey");
 
-        Assert.assertEquals(0, result);
+        Assert.assertFalse("should return false when delete is unsuccessful", result);
     }
 
     @After

@@ -1,61 +1,60 @@
 package com.revature.assignforce.assignforcefilehandlerservice.service;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.AnonymousAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import com.amazonaws.services.s3.AmazonS3Client;
 
 @Service
 public class FileService {
 
-    private AmazonS3Client client;
-    private final String BUCKET = "test-bucket";
+    private AmazonS3 client;
 
-    public AmazonS3Client getClient() {
-        AwsClientBuilder.EndpointConfiguration endpoint = new AwsClientBuilder.EndpointConfiguration("http://localhost:8765", "us-west-2");
-        client = (AmazonS3Client) AmazonS3ClientBuilder
-                .standard()
-                .withPathStyleAccessEnabled(true)
-                .withEndpointConfiguration(endpoint)
-                .withCredentials(new AWSStaticCredentialsProvider(new AnonymousAWSCredentials()))
-                .build();
-        return client;
-    }
+    @Value("${service.s3.bucket}")
+    private String bucket;
 
-    public void setClient(AmazonS3Client client) {
+    @Autowired
+    public void setClient(AmazonS3 client) {
         this.client = client;
     }
 
+    /**
+     * Creates key from file metadata, uploads file to S3 with generated key.
+     * If successful upload, return key.
+     * TODO: switch from accepting key to accepting metadata (object? string?) and generating key.
+     * @param file
+     * @param key
+     * @return
+     */
     public String save(File file, String key) {
-        AmazonS3Client client = getClient();
         //put object into bucket and return key
-        client.createBucket(BUCKET);
-        client.putObject(BUCKET,"test",file);
+        client.createBucket(bucket);
+        client.putObject(bucket, "test", file);
         return key;
     }
 
+    /**
+     *
+     * @param key
+     * @return
+     */
     public S3Object get(String key) {
-        AmazonS3Client client = getClient();
         try {
-            return client.getObject(BUCKET, key);
+            return client.getObject(bucket, key);
         } catch(Exception e) {
             return null;
         }
     }
 
-    public int delete(String key) {
-        AmazonS3Client client = getClient();
+    public boolean delete(String key) {
         try {
-            client.deleteObject(BUCKET, key);
-            return 1;
+            client.deleteObject(bucket, key);
+            return true;
         } catch(Exception e) {
-            return 0;
+            return false;
         }
     }
 }

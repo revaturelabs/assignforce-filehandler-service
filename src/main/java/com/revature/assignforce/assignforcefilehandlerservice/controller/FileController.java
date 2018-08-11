@@ -7,13 +7,20 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 
+@CrossOrigin
 @RestController
 public class FileController {
-    @Autowired
+
     private FileService fileService;
 
+    @Autowired
+    public void setFileService(FileService fileService) {
+        this.fileService = fileService;
+    }
+
     /**
-     * returns key for the uploaded file
+     * Accepts a file and metadata (?) from the request body.
+     * TODO: switch from temporary key to metadata.
      * @return
      */
     @PostMapping("/")
@@ -27,7 +34,7 @@ public class FileController {
     }
 
     @DeleteMapping("/")
-    public int deleteFile(@RequestParam(value="key") String key) {
+    public boolean deleteFile(@RequestParam(value="key") String key) {
         return fileService.delete(key);
     }
 }
