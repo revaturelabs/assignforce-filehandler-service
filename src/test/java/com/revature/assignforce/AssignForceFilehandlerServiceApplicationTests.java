@@ -1,16 +1,16 @@
-package com.revature.assignforce;
+// package com.revature.assignforce;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+// import org.junit.Test;
+// import org.junit.runner.RunWith;
+// import org.springframework.boot.test.context.SpringBootTest;
+// import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
-public class AssignForceFilehandlerServiceApplicationTests {
+// @RunWith(SpringJUnit4ClassRunner.class)
+// @SpringBootTest
+// public class AssignForceFilehandlerServiceApplicationTests {
 
-    @Test
-    public void contextLoads() {
-    }
+//     @Test
+//     public void contextLoads() {
+//     }
 
-}
+// }
