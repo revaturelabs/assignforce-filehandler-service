@@ -1,7 +1,7 @@
-package com.revature.assignforce.controller;
+package com.revature.assignforce.assignforcefilehandlerservice.controller;
 
 import com.amazonaws.services.s3.model.S3Object;
-import com.revature.assignforce.service.FileService;
+import com.revature.assignforce.assignforcefilehandlerservice.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

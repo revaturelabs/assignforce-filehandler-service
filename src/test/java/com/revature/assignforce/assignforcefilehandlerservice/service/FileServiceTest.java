@@ -1,7 +1,8 @@
-package com.revature.assignforce.controller;
+package com.revature.assignforce.assignforcefilehandlerservice.service;
 
 import com.amazonaws.services.s3.model.S3Object;
 import io.findify.s3mock.S3Mock;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,10 +19,10 @@ import java.io.IOException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class FileControllerTests {
+public class FileServiceTest {
 
     @TestConfiguration
-    static class FileControllerTestConfiguration {
+    static class FileServiceTestConfiguration {
 
         @Bean
         public S3Mock mockServer() {
@@ -30,10 +31,10 @@ public class FileControllerTests {
     }
 
     @Autowired
-    private S3Mock mockServer;
+    private FileService fileService;
 
     @Autowired
-    private FileController fileController;
+    private S3Mock mockServer;
 
     @Before
     public void init() {
@@ -43,67 +44,60 @@ public class FileControllerTests {
 
     @Test
     public void shouldUploadFile() throws IOException {
-        // create simple file (?)
+        //create file to upload
         File file = File.createTempFile("test",".tmp");
-        String testKey = "test";
-        // use controller to upload file
-        String key = fileController.addFile(file, testKey);
-
-        Assert.assertEquals(testKey, key);
+        String key = fileService.save(file,"test");
+        Assert.assertEquals("test", key);
     }
 
     @Test
     public void shouldReturnTestFileWhenGettingFileWithKey() throws IOException {
-        // create simple file
+        //create file to upload
         File file = File.createTempFile("test",".tmp");
+        //use fileService to add file to bucket
+        fileService.save(file,"test");
 
-        // use controller to upload file, return key
-        String key = fileController.addFile(file, "test");
+        //retrieve file from bucket using key
+        S3Object object = fileService.get("test");
+        File file2 = new File("resources/testFile.txt");
 
-        // use key returned by controller to fetch file
-        S3Object obj = fileController.getFile(key);
+        FileUtils.copyInputStreamToFile(object.getObjectContent(),file2);
 
-        Assert.assertNotNull(obj);
+        Assert.assertTrue(FileUtils.contentEquals(file,file2));
     }
 
     @Test
     public void shouldReturnNullWhenGettingFileWithInvalidKey() throws IOException {
-        //create file to add to bucket
-        File file = File.createTempFile("test", ".tmp");
+        //create file to upload
+        File file = File.createTempFile("test",".tmp");
+        //add file to bucket
+        fileService.save(file, "test");
 
-        //use controller to add file
-        fileController.addFile(file,"test");
-
-        //use wrong key to get file
-        S3Object obj = fileController.getFile("someKey");
-
-        Assert.assertNull(obj);
+        Assert.assertNull(fileService.get("someKey"));
     }
 
     @Test
     public void shouldReturnTrueWhenDeletingFileWithKey() throws IOException {
-        // create simple file
+        //create file to upload
         File file = File.createTempFile("test",".tmp");
 
-        // use controller to upload file, return key
-        String key = fileController.addFile(file, "test");
+        //use fileService to add file to bucket
+        String key = fileService.save(file, "test");
 
-        // use key to delete file
-        boolean result = fileController.deleteFile(key);
+        //delete file from bucket
+        boolean result = fileService.delete(key);
 
         Assert.assertTrue("should return true when delete is successful", result);
     }
 
     @Test
     public void shouldReturnFalseWhenDeletingFileWithInvalidKey() throws IOException {
-        //create file to have in bucket
+        //create file and save file to establish bucket
         File file = File.createTempFile("test",".tmp");
+        fileService.save(file, "test");
 
-        //use controller to upload file and return key
-        fileController.addFile(file, "test");
-
-        //use wrong key to try to delete file
-        boolean result = fileController.deleteFile("someKey");
+        //delete file that doesn't exist in bucket
+        boolean result = fileService.delete("someKey");
 
         Assert.assertFalse("should return false when delete is unsuccessful", result);
     }
