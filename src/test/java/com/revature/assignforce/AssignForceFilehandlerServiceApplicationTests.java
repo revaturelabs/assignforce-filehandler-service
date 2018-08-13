@@ -1,4 +1,4 @@
-package com.revature.assignforce.assignforcefilehandlerservice;
+package com.revature.assignforce;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
