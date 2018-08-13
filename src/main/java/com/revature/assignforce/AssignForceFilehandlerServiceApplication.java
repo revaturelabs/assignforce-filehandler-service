@@ -1,4 +1,4 @@
-package com.revature.assignforce.assignforcefilehandlerservice;
+package com.revature.assignforce;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

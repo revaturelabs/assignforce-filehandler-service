@@ -1,4 +1,4 @@
-package com.revature.assignforce.assignforcefilehandlerservice.service;
+package com.revature.assignforce.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
