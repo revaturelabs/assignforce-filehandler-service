@@ -1,4 +1,4 @@
-package com.revature.assignforce.assignforcefilehandlerservice.config;
+package com.revature.assignforce.assignforcefilehandler.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.AnonymousAWSCredentials;

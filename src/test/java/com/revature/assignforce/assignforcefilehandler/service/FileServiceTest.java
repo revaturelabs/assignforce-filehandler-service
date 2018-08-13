@@ -1,4 +1,4 @@
-package com.revature.assignforce.assignforcefilehandlerservice.service;
+package com.revature.assignforce.assignforcefilehandler.service;
 
 import com.amazonaws.services.s3.model.S3Object;
 import io.findify.s3mock.S3Mock;
