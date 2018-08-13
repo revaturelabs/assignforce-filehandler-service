@@ -7,6 +7,3 @@ applications:
       - rabbit-mq-rev
       - discovery-rev
       - config-rev
-    docker:
-      image: ajduet/af-filehandler:latest
-      username: ajduet

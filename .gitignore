@@ -7,6 +7,9 @@
 /tmp
 /out-tsc
 
+.vscode/
+*.iml
+
 # dependencies
 node_modules
 
