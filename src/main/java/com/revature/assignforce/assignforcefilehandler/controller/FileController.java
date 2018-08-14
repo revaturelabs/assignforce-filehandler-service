@@ -1,6 +1,8 @@
 package com.revature.assignforce.assignforcefilehandler.controller;
 
 import com.amazonaws.services.s3.model.S3Object;
+import com.revature.assignforce.assignforcefilehandler.model.FileData;
+import com.revature.assignforce.assignforcefilehandler.model.Metadata;
 import com.revature.assignforce.assignforcefilehandler.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +26,8 @@ public class FileController {
      * @return
      */
     @PostMapping("/")
-    public String addFile(@RequestBody File file, @RequestBody String key) {
-        return fileService.save(file, key);
+    public String addFile(@RequestBody FileData data) {
+        return fileService.save(data);
     }
 
     @GetMapping("/")
