@@ -1,6 +1,8 @@
 package com.revature.assignforce.assignforcefilehandler.controller;
 
 import com.amazonaws.services.s3.model.S3Object;
+import com.revature.assignforce.assignforcefilehandler.model.FileData;
+import com.revature.assignforce.assignforcefilehandler.model.Metadata;
 import io.findify.s3mock.S3Mock;
 import org.junit.After;
 import org.junit.Assert;
@@ -35,30 +37,40 @@ public class FileControllerTests {
     @Autowired
     private FileController fileController;
 
+    private FileData data;
+    private String expectedKey;
+
     @Before
-    public void init() {
+    public void init() throws IOException {
         // create mock s3 server with s3mock
         mockServer.start();
+
+        // create file to upload
+        File file = File.createTempFile("test",".tmp");
+
+        expectedKey = "test_uploader_user_" + file.getName();
+
+        Metadata metadata = new Metadata();
+        metadata.setUploader("test_uploader_user");
+
+        data = new FileData();
+        data.setFile(file);
+        data.setMetadata(metadata);
     }
 
     @Test
     public void shouldUploadFile() throws IOException {
-        // create simple file (?)
-        File file = File.createTempFile("test",".tmp");
-        String testKey = "test";
         // use controller to upload file
-        String key = fileController.addFile(file, testKey);
+        String key = fileController.addFile(data);
 
-        Assert.assertEquals(testKey, key);
+        Assert.assertEquals(expectedKey, key);
     }
 
     @Test
     public void shouldReturnTestFileWhenGettingFileWithKey() throws IOException {
-        // create simple file
-        File file = File.createTempFile("test",".tmp");
 
         // use controller to upload file, return key
-        String key = fileController.addFile(file, "test");
+        String key = fileController.addFile(data);
 
         // use key returned by controller to fetch file
         S3Object obj = fileController.getFile(key);
@@ -68,11 +80,9 @@ public class FileControllerTests {
 
     @Test
     public void shouldReturnNullWhenGettingFileWithInvalidKey() throws IOException {
-        //create file to add to bucket
-        File file = File.createTempFile("test", ".tmp");
 
         //use controller to add file
-        fileController.addFile(file,"test");
+        fileController.addFile(data);
 
         //use wrong key to get file
         S3Object obj = fileController.getFile("someKey");
@@ -82,11 +92,9 @@ public class FileControllerTests {
 
     @Test
     public void shouldReturnTrueWhenDeletingFileWithKey() throws IOException {
-        // create simple file
-        File file = File.createTempFile("test",".tmp");
 
         // use controller to upload file, return key
-        String key = fileController.addFile(file, "test");
+        String key = fileController.addFile(data);
 
         // use key to delete file
         boolean result = fileController.deleteFile(key);
@@ -96,11 +104,9 @@ public class FileControllerTests {
 
     @Test
     public void shouldReturnFalseWhenDeletingFileWithInvalidKey() throws IOException {
-        //create file to have in bucket
-        File file = File.createTempFile("test",".tmp");
 
         //use controller to upload file and return key
-        fileController.addFile(file, "test");
+        fileController.addFile(data);
 
         //use wrong key to try to delete file
         boolean result = fileController.deleteFile("someKey");

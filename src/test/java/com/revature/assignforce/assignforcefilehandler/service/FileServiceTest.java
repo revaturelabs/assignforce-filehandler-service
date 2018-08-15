@@ -1,6 +1,9 @@
 package com.revature.assignforce.assignforcefilehandler.service;
 
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
+import com.revature.assignforce.assignforcefilehandler.model.FileData;
+import com.revature.assignforce.assignforcefilehandler.model.Metadata;
 import io.findify.s3mock.S3Mock;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -36,53 +39,73 @@ public class FileServiceTest {
     @Autowired
     private S3Mock mockServer;
 
+    private FileData data;
+    private String expectedKey;
+
     @Before
-    public void init() {
+    public void init() throws IOException {
         // create mock s3 server with s3mock
         mockServer.start();
+
+        // create file to upload
+        File file = File.createTempFile("test",".tmp");
+
+        expectedKey = "test_uploader_user_" + file.getName();
+
+        Metadata metadata = new Metadata();
+        metadata.setUploader("test_uploader_user");
+
+        data = new FileData();
+        data.setFile(file);
+        data.setMetadata(metadata);
     }
 
     @Test
     public void shouldUploadFile() throws IOException {
-        //create file to upload
-        File file = File.createTempFile("test",".tmp");
-        String key = fileService.save(file,"test");
-        Assert.assertEquals("test", key);
+        String key = fileService.save(data);
+        Assert.assertEquals(expectedKey, key);
+    }
+
+    @Test
+    public void shouldContainMetadataInUploadedFile() throws IOException {
+        // use fileService to add file to bucket
+        fileService.save(data);
+
+        // retrieve file from bucket using key
+        S3Object object = fileService.get(expectedKey);
+        ObjectMetadata objectMetadata = object.getObjectMetadata();
+
+        Assert.assertEquals(data.getMetadata().getUploader(), objectMetadata.getUserMetaDataOf("x-amz-meta-uploader"));
     }
 
     @Test
     public void shouldReturnTestFileWhenGettingFileWithKey() throws IOException {
-        //create file to upload
-        File file = File.createTempFile("test",".tmp");
-        //use fileService to add file to bucket
-        fileService.save(file,"test");
+        // use fileService to add file to bucket
+        fileService.save(data);
 
-        //retrieve file from bucket using key
-        S3Object object = fileService.get("test");
-        File file2 = new File("resources/testFile.txt");
+        // retrieve file from bucket using key
+        S3Object object = fileService.get(expectedKey);
+        File file = new File("resources/testFile.txt");
 
-        FileUtils.copyInputStreamToFile(object.getObjectContent(),file2);
+        FileUtils.copyInputStreamToFile(object.getObjectContent(), file);
 
-        Assert.assertTrue(FileUtils.contentEquals(file,file2));
+        Assert.assertTrue(FileUtils.contentEquals(data.getFile(), file));
+
+        file.delete();
     }
 
     @Test
     public void shouldReturnNullWhenGettingFileWithInvalidKey() throws IOException {
-        //create file to upload
-        File file = File.createTempFile("test",".tmp");
-        //add file to bucket
-        fileService.save(file, "test");
+        // use fileService to add file to bucket
+        fileService.save(data);
 
         Assert.assertNull(fileService.get("someKey"));
     }
 
     @Test
     public void shouldReturnTrueWhenDeletingFileWithKey() throws IOException {
-        //create file to upload
-        File file = File.createTempFile("test",".tmp");
-
-        //use fileService to add file to bucket
-        String key = fileService.save(file, "test");
+        // use fileService to add file to bucket
+        String key = fileService.save(data);
 
         //delete file from bucket
         boolean result = fileService.delete(key);
@@ -92,9 +115,8 @@ public class FileServiceTest {
 
     @Test
     public void shouldReturnFalseWhenDeletingFileWithInvalidKey() throws IOException {
-        //create file and save file to establish bucket
-        File file = File.createTempFile("test",".tmp");
-        fileService.save(file, "test");
+        // use fileService to add file to bucket
+        fileService.save(data);
 
         //delete file that doesn't exist in bucket
         boolean result = fileService.delete("someKey");
