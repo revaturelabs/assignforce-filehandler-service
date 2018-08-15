@@ -1,8 +1,8 @@
 pipeline {
     agent any
     environment {
-        APP_NAME="curriculum-service"
-        IMG_NAME="af-curriculum"
+        APP_NAME="filehandler-service"
+        IMG_NAME="af-filehandler"
     }
 
     stages {
