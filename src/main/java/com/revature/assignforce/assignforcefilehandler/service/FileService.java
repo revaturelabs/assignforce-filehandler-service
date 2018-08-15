@@ -9,8 +9,10 @@ import com.revature.assignforce.assignforcefilehandler.model.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 
 @Service
 public class FileService {
@@ -29,21 +31,24 @@ public class FileService {
      * Creates key from file metadata, uploads file to S3 with generated key.
      * If successful upload, return key.
      * TODO: switch from accepting key to accepting metadata (object? string?) and generating key.
-     * @param data
+     * @param file
+     * @param category
+     * @param trainer_id
      * @return
      */
-    public String save(FileData data) {
-        Metadata metadata = data.getMetadata();
+    public String save(MultipartFile file, String category, int trainer_id) throws IOException {
 
-        String key = metadata.getUploader() + "_" + data.getFile().getName();
+        String key = category + "/" + trainer_id + "-" + file.getOriginalFilename();
 
         ObjectMetadata objectMetadata = new ObjectMetadata();
-        objectMetadata.addUserMetadata("x-amz-meta-uploader", metadata.getUploader());
+        objectMetadata.setContentType(file.getContentType());
+        objectMetadata.setContentLength(file.getSize());
+        objectMetadata.addUserMetadata("x-amz-meta-uploader", "id_" + trainer_id);
 
-        PutObjectRequest object = new PutObjectRequest(bucket, key, data.getFile());
+        PutObjectRequest object = new PutObjectRequest(bucket, key, file.getInputStream(), objectMetadata);
         object.setMetadata(objectMetadata);
 
-        //put object into bucket and return key
+        // put object into bucket and return key
         client.createBucket(bucket);
         client.putObject(object);
 
