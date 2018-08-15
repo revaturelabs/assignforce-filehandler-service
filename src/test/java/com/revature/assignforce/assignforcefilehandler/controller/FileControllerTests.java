@@ -30,11 +30,8 @@ public class FileControllerTests {
         }
     }
 
-    @Autowired
-    private S3Mock mockServer;
-
-    @Autowired
-    private FileController fileController;
+    @Autowired private S3Mock mockServer;
+    @Autowired private FileController fileController;
 
     private static final int TEST_TRAINER_ID = 1;
     private static final String TEST_CATEGORY = "resume";
@@ -64,7 +61,6 @@ public class FileControllerTests {
         Assert.assertEquals(expectedKey, key);
     }
 
-    @Ignore
     @Test
     public void shouldReturnTestFileWhenGettingFileWithKey() throws IOException {
 
@@ -77,7 +73,6 @@ public class FileControllerTests {
         Assert.assertNotNull(obj);
     }
 
-    @Ignore
     @Test
     public void shouldReturnNullWhenGettingFileWithInvalidKey() throws IOException {
 
@@ -92,7 +87,6 @@ public class FileControllerTests {
         Assert.assertNull(obj);
     }
 
-    @Ignore
     @Test
     public void shouldReturnTrueWhenDeletingFileWithKey() throws IOException {
 
@@ -105,7 +99,22 @@ public class FileControllerTests {
         Assert.assertTrue("should return true when delete is successful", result);
     }
 
-    @Ignore
+    @Test
+    public void shouldReturnNullWhenGettingDeletedFile() throws IOException {
+
+        // use controller to upload file, return key
+        String key = fileController.addFile(multipartFile, TEST_CATEGORY, TEST_TRAINER_ID);
+
+        // use key to delete file
+        boolean result = fileController.deleteFile(key);
+
+        // use deleted key to get file
+        S3Object obj = fileController.getFile(key);
+
+        Assert.assertTrue(result);
+        Assert.assertNull(obj);
+    }
+
     @Test
     public void shouldReturnFalseWhenDeletingFileWithInvalidKey() throws IOException {
 

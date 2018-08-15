@@ -1,47 +1,47 @@
-package com.revature.assignforce.assignforcefilehandler.service;
-
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.S3Object;
-import com.revature.assignforce.assignforcefilehandler.model.FileData;
-import com.revature.assignforce.assignforcefilehandler.model.Metadata;
-import io.findify.s3mock.S3Mock;
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import java.io.File;
-import java.io.IOException;
-
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class FileServiceTest {
-
-    @TestConfiguration
-    static class FileServiceTestConfiguration {
-
-        @Bean
-        public S3Mock mockServer() {
-            return new S3Mock.Builder().withPort(8765).withInMemoryBackend().build();
-        }
-    }
-
-    @Autowired
-    private FileService fileService;
-
-    @Autowired
-    private S3Mock mockServer;
-
-    private FileData data;
-    private String expectedKey;
-
+//package com.revature.assignforce.assignforcefilehandler.service;
+//
+//import com.amazonaws.services.s3.model.ObjectMetadata;
+//import com.amazonaws.services.s3.model.S3Object;
+//import com.revature.assignforce.assignforcefilehandler.model.FileData;
+//import com.revature.assignforce.assignforcefilehandler.model.Metadata;
+//import io.findify.s3mock.S3Mock;
+//import org.apache.commons.io.FileUtils;
+//import org.junit.After;
+//import org.junit.Assert;
+//import org.junit.Before;
+//import org.junit.Test;
+//import org.junit.runner.RunWith;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.boot.test.context.TestConfiguration;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.test.context.junit4.SpringRunner;
+//
+//import java.io.File;
+//import java.io.IOException;
+//
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
+//public class FileServiceTest {
+//
+//    @TestConfiguration
+//    static class FileServiceTestConfiguration {
+//
+//        @Bean
+//        public S3Mock mockServer() {
+//            return new S3Mock.Builder().withPort(8765).withInMemoryBackend().build();
+//        }
+//    }
+//
+//    @Autowired
+//    private FileService fileService;
+//
+//    @Autowired
+//    private S3Mock mockServer;
+//
+//    private FileData data;
+//    private String expectedKey;
+//
 //    @Before
 //    public void init() throws IOException {
 //        // create mock s3 server with s3mock
@@ -129,4 +129,4 @@ public class FileServiceTest {
 //        // shutdown s3mock
 //        mockServer.stop();
 //    }
-}
+//}
