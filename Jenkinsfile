@@ -1,7 +1,8 @@
 pipeline {
     agent any
     environment {
-        APP_NAME="af-filehandler"
+        APP_NAME="filehandler-service"
+        IMG_NAME="af-filehandler"
     }
 
     stages {
@@ -113,7 +114,7 @@ pipeline {
                 script {
                     try {
                         sh "echo push; mvn dockerfile:push"
-                        sh "echo remove local image; docker image rm ${env.DK_U}/${env.APP_NAME}:${env.DK_TAG}"
+                        sh "echo remove local image; docker image rm ${env.DK_U}/${env.IMG_NAME}:${env.DK_TAG}"
                     } catch(Exception e) {
                         env.FAIL_STG='Docker Archive'
                         currentBuild.result='FAILURE'
@@ -135,15 +136,19 @@ pipeline {
                 script {
                     try {
                         if(env.BRANCH_NAME == 'master') {
-                            env.SPACE = "production"
-                            env.IMG="${env.DK_U}/${env.APP_NAME}:latest"
+                            env.SPACE = "master"
+                            env.IMG="${env.DK_U}/${env.IMG_NAME}:latest"
+                            env.PROFILE="master"
                         } else if(env.BRANCH_NAME == 'development' || env.DEBUG_BLD == '1') {
                             env.SPACE = "development"
-                            env.IMG="${env.DK_U}/${env.APP_NAME}:dev-latest"
+                            env.IMG="${env.DK_U}/${env.IMG_NAME}:dev-latest"
+                            env.PROFILE="development"
                         }
                         env.CF_DOCKER_PASSWORD=readFile("/run/secrets/CF_DOCKER_PASSWORD").trim()
                         sh "cf target -s ${env.SPACE}"
-                        sh "cf push -o ${env.IMG} --docker-username ${env.DK_U}"
+                        sh "cf push -o ${env.IMG} --docker-username ${env.DK_U} --no-start"
+                        sh "cf set-env ${env.APP_NAME} SPRING_PROFILES_ACTIVE ${env.PROFILE}"
+                        sh "cf start ${env.APP_NAME}"
                     } catch(Exception e) {
                         env.FAIL_STG="PCF Deploy"
                         currentBuild.result='FAILURE'
