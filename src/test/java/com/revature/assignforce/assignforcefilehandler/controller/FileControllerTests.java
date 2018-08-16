@@ -1,6 +1,5 @@
 package com.revature.assignforce.assignforcefilehandler.controller;
 
-import com.amazonaws.services.s3.model.S3Object;
 import io.findify.s3mock.S3Mock;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -8,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -62,9 +63,10 @@ public class FileControllerTests {
     @Test
     public void shouldReturnTestFileWhenGettingFileWithKey() throws IOException {
         // use key returned by controller to fetch file
-        S3Object obj = fileController.getFile(key);
+        ResponseEntity<byte[]> obj = fileController.getFile(key);
 
         Assert.assertNotNull(obj);
+        Assert.assertEquals(HttpStatus.OK, obj.getStatusCode());
     }
 
     @Test
@@ -72,10 +74,10 @@ public class FileControllerTests {
         String invalidKey = "someKey";
 
         // use wrong key to get file
-        S3Object obj = fileController.getFile(invalidKey);
+        ResponseEntity<byte[]> obj = fileController.getFile(invalidKey);
 
         Assert.assertNotEquals(invalidKey, key);
-        Assert.assertNull(obj);
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, obj.getStatusCode());
     }
 
     @Test
@@ -92,10 +94,10 @@ public class FileControllerTests {
         boolean result = fileController.deleteFile(key);
 
         // use deleted key to get file
-        S3Object obj = fileController.getFile(key);
+        ResponseEntity<byte[]> obj = fileController.getFile(key);
 
         Assert.assertTrue(result);
-        Assert.assertNull(obj);
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, obj.getStatusCode());
     }
 
     @Test
