@@ -4,6 +4,8 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.revature.assignforce.assignforcefilehandler.service.FileService;
+import jdk.internal.util.xml.impl.Input;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,10 +43,14 @@ public class FileController {
     }
 
     @GetMapping(value = "/")
-    public ResponseEntity<byte[]> getFile(@RequestParam(value = "key") String key) throws IOException {
-        byte[] media = fileService.get(key);
+    public ResponseEntity<byte[]> getFile(@RequestParam(value = "key") String key) {
+        try(InputStream inputStream = fileService.get(key).getObjectContent()){
+            byte[] media = IOUtils.toByteArray(inputStream);
 
-        return new ResponseEntity<>(media, HttpStatus.OK);
+            return new ResponseEntity<>(media, HttpStatus.OK);
+        } catch(Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/")
