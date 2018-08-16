@@ -43,7 +43,7 @@ public class FileService {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(file.getContentType());
         objectMetadata.setContentLength(file.getSize());
-        objectMetadata.addUserMetadata("x-amz-meta-uploader", "id_" + trainer_id);
+        objectMetadata.addUserMetadata("x-amz-meta-trainer", "id_" + trainer_id);
 
         PutObjectRequest object = new PutObjectRequest(bucket, key, file.getInputStream(), objectMetadata);
         object.setMetadata(objectMetadata);
