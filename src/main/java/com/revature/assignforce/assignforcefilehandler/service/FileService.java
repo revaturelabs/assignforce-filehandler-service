@@ -27,7 +27,6 @@ public class FileService {
     /**
      * Creates key from file metadata, uploads file to S3 with generated key.
      * If successful upload, return key.
-     * TODO: switch from accepting key to accepting metadata (object? string?) and generating key.
      * @param file
      * @param category
      * @param trainer_id

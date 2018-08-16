@@ -1,7 +1,5 @@
 package com.revature.assignforce.assignforcefilehandler.controller;
 
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.revature.assignforce.assignforcefilehandler.service.FileService;
 import jdk.internal.util.xml.impl.Input;
@@ -14,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.nio.file.Files;
+
 
 @CrossOrigin
 @RestController
