@@ -4,14 +4,11 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
-import com.revature.assignforce.assignforcefilehandler.model.FileData;
-import com.revature.assignforce.assignforcefilehandler.model.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 
 @Service
@@ -30,7 +27,6 @@ public class FileService {
     /**
      * Creates key from file metadata, uploads file to S3 with generated key.
      * If successful upload, return key.
-     * TODO: switch from accepting key to accepting metadata (object? string?) and generating key.
      * @param file
      * @param category
      * @param trainer_id
