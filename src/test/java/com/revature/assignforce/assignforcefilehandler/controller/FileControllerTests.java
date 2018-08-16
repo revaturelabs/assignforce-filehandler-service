@@ -1,7 +1,5 @@
 package com.revature.assignforce.assignforcefilehandler.controller;
 
-import akka.http.javadsl.Http;
-import com.amazonaws.services.s3.model.S3Object;
 import io.findify.s3mock.S3Mock;
 import org.junit.*;
 import org.junit.runner.RunWith;

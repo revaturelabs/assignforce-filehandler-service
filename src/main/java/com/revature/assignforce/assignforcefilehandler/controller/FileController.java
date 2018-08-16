@@ -1,12 +1,9 @@
 package com.revature.assignforce.assignforcefilehandler.controller;
 
-import com.amazonaws.services.s3.model.S3Object;
 import com.revature.assignforce.assignforcefilehandler.service.FileService;
-import jdk.internal.util.xml.impl.Input;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
