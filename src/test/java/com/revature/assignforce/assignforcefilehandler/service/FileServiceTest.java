@@ -2,10 +2,7 @@ package com.revature.assignforce.assignforcefilehandler.service;
 
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
-import com.revature.assignforce.assignforcefilehandler.model.FileData;
-import com.revature.assignforce.assignforcefilehandler.model.Metadata;
 import io.findify.s3mock.S3Mock;
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.File;
 import java.io.IOException;
 
 @RunWith(SpringRunner.class)
