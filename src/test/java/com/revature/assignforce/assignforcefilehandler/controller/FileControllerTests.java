@@ -34,6 +34,7 @@ public class FileControllerTests {
     private static final String TEST_CATEGORY = "resume";
     private static final String TEST_FILENAME = "test.txt";
 
+    private String key;
     private String expectedKey;
     private MockMultipartFile multipartFile;
 
@@ -48,22 +49,18 @@ public class FileControllerTests {
         multipartFile = new MockMultipartFile(
                 "user-file", TEST_FILENAME, MediaType.TEXT_PLAIN_VALUE,
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit.".getBytes());
+
+        // use controller to upload file
+        key = fileController.addFile(multipartFile, TEST_CATEGORY, TEST_TRAINER_ID);
     }
 
     @Test
     public void shouldUploadFile() throws IOException {
-        // use controller to upload file
-        String key = fileController.addFile(multipartFile, TEST_CATEGORY, TEST_TRAINER_ID);
-
         Assert.assertEquals(expectedKey, key);
     }
 
     @Test
     public void shouldReturnTestFileWhenGettingFileWithKey() throws IOException {
-
-        // use controller to upload file, return key
-        String key = fileController.addFile(multipartFile, TEST_CATEGORY, TEST_TRAINER_ID);
-
         // use key returned by controller to fetch file
         S3Object obj = fileController.getFile(key);
 
@@ -72,9 +69,6 @@ public class FileControllerTests {
 
     @Test
     public void shouldReturnNullWhenGettingFileWithInvalidKey() throws IOException {
-
-        // use controller to add file
-        String key = fileController.addFile(multipartFile, TEST_CATEGORY, TEST_TRAINER_ID);
         String invalidKey = "someKey";
 
         // use wrong key to get file
@@ -86,10 +80,6 @@ public class FileControllerTests {
 
     @Test
     public void shouldReturnTrueWhenDeletingFileWithKey() throws IOException {
-
-        // use controller to upload file, return key
-        String key = fileController.addFile(multipartFile, TEST_CATEGORY, TEST_TRAINER_ID);
-
         // use key to delete file
         boolean result = fileController.deleteFile(key);
 
@@ -98,10 +88,6 @@ public class FileControllerTests {
 
     @Test
     public void shouldReturnNullWhenGettingDeletedFile() throws IOException {
-
-        // use controller to upload file, return key
-        String key = fileController.addFile(multipartFile, TEST_CATEGORY, TEST_TRAINER_ID);
-
         // use key to delete file
         boolean result = fileController.deleteFile(key);
 
@@ -114,9 +100,6 @@ public class FileControllerTests {
 
     @Test
     public void shouldReturnFalseWhenDeletingFileWithInvalidKey() throws IOException {
-
-        // use controller to upload file and return key
-        String key = fileController.addFile(multipartFile, TEST_CATEGORY, TEST_TRAINER_ID);
         String invalidKey = "someKey";
 
         // use wrong key to delete file
