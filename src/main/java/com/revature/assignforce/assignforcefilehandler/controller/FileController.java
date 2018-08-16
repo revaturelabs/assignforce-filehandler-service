@@ -5,11 +5,12 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.revature.assignforce.assignforcefilehandler.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 
 @CrossOrigin
 @RestController
@@ -37,8 +38,37 @@ public class FileController {
         }
     }
 
-    @GetMapping("/")
-    public S3Object getFile(@RequestParam(value = "key") String key) {
+    @GetMapping(value = "/")
+    public byte[] getFile(@RequestParam(value = "key") String key) throws IOException {
+//        InputStream in = s3Object.getObjectContent();
+//        byte[] buf = new byte[1024];
+//        OutputStream out = new FileOutputStream(file);
+//        while( (count = in.read(buf)) != -1)
+//        {
+//            if( Thread.interrupted() )
+//            {
+//                throw new InterruptedException();
+//            }
+//            out.write(buf, 0, count);
+//        }
+//        out.close();
+//        in.close()
+        S3Object data = fileService.get(key);
+        File file = File.createTempFile("s3File","");
+        int count;
+
+        try (InputStream inputStream = data.getObjectContent(); OutputStream outputStream = new FileOutputStream(file)) {
+            byte[] buffer = new byte[1024];
+            while ((count = inputStream.read(buffer)) != -1) {
+                if (Thread.interrupted()) {
+                    throw new InterruptedException();
+                }
+                outputStream.write(buffer, 0, count);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         return fileService.get(key);
     }
 
