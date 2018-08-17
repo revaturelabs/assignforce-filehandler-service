@@ -1,12 +1,14 @@
 package com.revature.assignforce.assignforcefilehandler.controller;
 
-import com.amazonaws.services.s3.model.S3Object;
 import com.revature.assignforce.assignforcefilehandler.service.FileService;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import java.io.*;
 
-import java.io.IOException;
 
 @CrossOrigin
 @RestController
@@ -34,9 +36,15 @@ public class FileController {
         }
     }
 
-    @GetMapping("/")
-    public S3Object getFile(@RequestParam(value = "key") String key) {
-        return fileService.get(key);
+    @GetMapping(value = "/")
+    public ResponseEntity<byte[]> getFile(@RequestParam(value = "key") String key) {
+        try(InputStream inputStream = fileService.get(key).getObjectContent()){
+            byte[] media = IOUtils.toByteArray(inputStream);
+
+            return new ResponseEntity<>(media, HttpStatus.OK);
+        } catch(Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/")
