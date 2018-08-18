@@ -26,6 +26,9 @@ public class S3Config {
     @Value("${service.s3.region}")
     private String region;
 
+    @Value("${service.s3.bucket}")
+    private String bucket;
+
     @Bean
     public AmazonS3 client() {
 //        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessId, accessKey);

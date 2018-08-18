@@ -1,21 +1,18 @@
 package com.revature.assignforce.assignforcefilehandler.controller;
 
-import com.amazonaws.services.s3.model.S3Object;
-import com.revature.assignforce.assignforcefilehandler.model.FileData;
-import com.revature.assignforce.assignforcefilehandler.model.Metadata;
 import io.findify.s3mock.S3Mock;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.File;
 import java.io.IOException;
 
 @RunWith(SpringRunner.class)
@@ -31,71 +28,60 @@ public class FileControllerTests {
         }
     }
 
-    @Autowired
-    private S3Mock mockServer;
+    @Autowired private S3Mock mockServer;
+    @Autowired private FileController fileController;
 
-    @Autowired
-    private FileController fileController;
+    private static final int TEST_TRAINER_ID = 1;
+    private static final String TEST_CATEGORY = "resume";
+    private static final String TEST_FILENAME = "test.txt";
 
-    private FileData data;
+    private String key;
     private String expectedKey;
+    private MockMultipartFile multipartFile;
 
     @Before
     public void init() throws IOException {
         // create mock s3 server with s3mock
         mockServer.start();
 
+        expectedKey = TEST_CATEGORY + "/" + TEST_TRAINER_ID + "-" + TEST_FILENAME;
+
         // create file to upload
-        File file = File.createTempFile("test",".tmp");
+        multipartFile = new MockMultipartFile(
+                "user-file", TEST_FILENAME, MediaType.TEXT_PLAIN_VALUE,
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit.".getBytes());
 
-        expectedKey = "test_uploader_user_" + file.getName();
-
-        Metadata metadata = new Metadata();
-        metadata.setUploader("test_uploader_user");
-
-        data = new FileData();
-        data.setFile(file);
-        data.setMetadata(metadata);
+        // use controller to upload file
+        key = fileController.addFile(multipartFile, TEST_CATEGORY, TEST_TRAINER_ID);
     }
 
     @Test
     public void shouldUploadFile() throws IOException {
-        // use controller to upload file
-        String key = fileController.addFile(data);
-
         Assert.assertEquals(expectedKey, key);
     }
 
     @Test
     public void shouldReturnTestFileWhenGettingFileWithKey() throws IOException {
-
-        // use controller to upload file, return key
-        String key = fileController.addFile(data);
-
         // use key returned by controller to fetch file
-        S3Object obj = fileController.getFile(key);
+        ResponseEntity<byte[]> obj = fileController.getFile(key);
 
         Assert.assertNotNull(obj);
+        Assert.assertEquals(HttpStatus.OK, obj.getStatusCode());
     }
 
     @Test
     public void shouldReturnNullWhenGettingFileWithInvalidKey() throws IOException {
+        String invalidKey = "someKey";
 
-        //use controller to add file
-        fileController.addFile(data);
+        // use wrong key to get file
+        ResponseEntity<byte[]> obj = fileController.getFile(invalidKey);
 
-        //use wrong key to get file
-        S3Object obj = fileController.getFile("someKey");
-
-        Assert.assertNull(obj);
+        Assert.assertNotEquals(invalidKey, key);
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, obj.getStatusCode());
     }
 
     @Test
     public void shouldReturnTrueWhenDeletingFileWithKey() throws IOException {
-
-        // use controller to upload file, return key
-        String key = fileController.addFile(data);
-
         // use key to delete file
         boolean result = fileController.deleteFile(key);
 
@@ -103,14 +89,25 @@ public class FileControllerTests {
     }
 
     @Test
+    public void shouldReturnNullWhenGettingDeletedFile() throws IOException {
+        // use key to delete file
+        boolean result = fileController.deleteFile(key);
+
+        // use deleted key to get file
+        ResponseEntity<byte[]> obj = fileController.getFile(key);
+
+        Assert.assertTrue(result);
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, obj.getStatusCode());
+    }
+
+    @Test
     public void shouldReturnFalseWhenDeletingFileWithInvalidKey() throws IOException {
+        String invalidKey = "someKey";
 
-        //use controller to upload file and return key
-        fileController.addFile(data);
-
-        //use wrong key to try to delete file
+        // use wrong key to delete file
         boolean result = fileController.deleteFile("someKey");
 
+        Assert.assertNotEquals(invalidKey, key);
         Assert.assertFalse("should return false when delete is unsuccessful", result);
     }
 
