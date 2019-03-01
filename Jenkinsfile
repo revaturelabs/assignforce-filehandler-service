@@ -1,7 +1,6 @@
 pipeline {
     agent any
     environment {
-        APP_NAME="filehandler-service"
         IMG_NAME="assignforce-filehandler"
         REPO="ajduet"
     }
@@ -136,7 +135,6 @@ pipeline {
                 }
             }
         }
-
 
         stage('Clean') {
             steps {
