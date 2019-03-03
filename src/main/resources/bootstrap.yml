@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    active: ${ACTIVE_PROFILES:default}
+  cloud:
+    config:
+      uri: ${CONFIG_URL}
+  application:
+    name: filehandler-service
+
+service:
+  s3:
+    url: http://localhost:8765
+    bucket: test-bucket
+    region: us-west-2
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
