@@ -1,8 +1,0 @@
-service:
-#  aws:
-#    access_key_id: id
-#    secret_access_key: key
-  s3:
-    url: http://localhost:8765
-    bucket: test-bucket
-    region: us-west-2
