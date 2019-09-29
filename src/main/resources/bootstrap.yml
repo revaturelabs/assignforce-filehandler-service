@@ -11,14 +11,14 @@ spring:
   datasource:
     driver-class-name: oracle.jdbc.driver.OracleDriver
 
-#service:
-#  s3:
-#    url: ${S3_URL:http://localhost:8765}
-#    bucket: ${S3_BUCKET:test-bucket}
-#    region: ${S3_REGION:us-east-1}
-#  aws:
-#    access_key_id: ${AWS_ACCESS_KEY_ID:test-key}
-#    secret_access_key: ${AWS_SECRET_ID:test-secret}
+service:
+  s3:
+    url: ${S3_URL:http://localhost:8765}
+    bucket: ${S3_BUCKET:test-bucket}
+    region: ${S3_REGION:us-east-1}
+  aws:
+    access_key_id: ${AWS_ACCESS_KEY_ID:test-key}
+    secret_access_key: ${AWS_SECRET_ID:test-secret}
 
 management:
   endpoints:
