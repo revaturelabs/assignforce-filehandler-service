@@ -11,6 +11,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+/**
+ * Service for handling files.
+ * @author devon
+ *
+ */
 @Service
 public class FileService {
 
@@ -52,7 +57,7 @@ public class FileService {
     }
 
     /**
-     *
+     * Gets a file from S3 based on key. 
      * @param key
      * @return
      */
@@ -64,6 +69,11 @@ public class FileService {
         }
     }
 
+    /**
+     * Deletes a file from S3 based on key.
+     * @param key
+     * @return
+     */
     public boolean delete(String key) {
         try {
             client.deleteObject(bucket, key);
