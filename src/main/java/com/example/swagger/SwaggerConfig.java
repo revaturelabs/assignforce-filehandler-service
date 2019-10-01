@@ -31,10 +31,9 @@ public class SwaggerConfig {
 	public Docket api() {
 		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
 				.paths(PathSelectors.any()).build()
-				.apiInfo(new ApiInfo("Thing API", "We got things.", "thing TOS", "Terms of service",
-						new Contact("Devon Virden", "https://i.imgur.com/g3MdE5u.gif", "devonjvirden@hotmail.com"),
-						"License of API", "API license URL", Collections.emptyList()))
-				.enable(true);
+				.apiInfo(new ApiInfo("Filehandler-Service", "Handles the connection with AWS:S3", null, null,
+						new Contact("August Duet", null, "august@revature.com"), null, null,
+						Collections.emptyList())).enable(true);
 	}
 
 }

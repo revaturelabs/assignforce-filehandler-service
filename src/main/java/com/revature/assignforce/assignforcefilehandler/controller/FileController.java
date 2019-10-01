@@ -10,15 +10,18 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
 
 /**
- * Controller for handling Files
+ * Controller for handling Files, and depositing them into AWS:S3.
  * 
  * @author devon
  *
  */
 @RestController
-@Api(value = "Controller for handling Files")
+@Api(value = "/api/filehandler", tags = "{controllerTags}")
+@SwaggerDefinition(tags = @Tag(name = "controllerTags", description = "Controller for handling Files, and depositing them into AWS:S3."))
 public class FileController {
 
 	private FileService fileService;
@@ -29,13 +32,15 @@ public class FileController {
 	}
 
 	/**
-	 * Accepts a file and metadata (?) from the request body. TODO: switch from
-	 * temporary key to metadata.
+	 * Accepts a file and metadata (?) from the request body. Passes the file into
+	 * the FileService to save to AWS:S3.
+	 * 
+	 * TODO: switch from temporary key to metadata.
 	 * 
 	 * @return
 	 */
 	@PostMapping("/")
-	@ApiOperation(value = "Accepts a file and metadata from the request body.")
+	@ApiOperation(value = "Accepts a file and metadata from the request body. Passes the file into the FileService to save to AWS:S3.", notes = "Takes in MultipartFile, Category (String), and Trainer ID (int). Returns the Key for the file to retrieve from S3.", response = String.class)
 	public String addFile(@RequestParam("file") MultipartFile file, @RequestParam("category") String category,
 			@RequestParam("trainer") int trainer) {
 		try {
@@ -47,13 +52,13 @@ public class FileController {
 	}
 
 	/**
-	 * Returns a file based on the input key.
+	 * Returns a file retrieved by FileService based on the input key.
 	 * 
 	 * @param key
 	 * @return
 	 */
 	@GetMapping(value = "/")
-	@ApiOperation(value = "Returns a file based on the input key.")
+	@ApiOperation(value = "Returns a Response containing a File retrieved AWS:S3.", notes = "Takes in the file's key. If successful, returns a 200 response containing the file as a byte array. Otherwise, it returns a 400 response.", consumes = "String", response = ResponseEntity.class)
 	public ResponseEntity<byte[]> getFile(@RequestParam(value = "key") String key) {
 		try (InputStream inputStream = fileService.get(key).getObjectContent()) {
 			byte[] media = IOUtils.toByteArray(inputStream);
@@ -71,7 +76,7 @@ public class FileController {
 	 * @return
 	 */
 	@DeleteMapping("/")
-	@ApiOperation(value = "Deletes a file based on the input key.")
+	@ApiOperation(value = "Deletes a file from AWS:S3 bucket based on the input key.", notes = "Takes in the file's key. If successful, returns true. Otherwise, it returns false.", consumes = "String", response = Boolean.class)
 	public boolean deleteFile(@RequestParam(value = "key") String key) {
 		return fileService.delete(key);
 	}
