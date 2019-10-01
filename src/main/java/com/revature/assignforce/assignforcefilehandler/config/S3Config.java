@@ -30,6 +30,10 @@ public class S3Config {
     @Value("${service.s3.bucket}")
     private String bucket;
 
+    /**
+     * Returns an S3 client in order to handle files.
+     * @return
+     */
     @Bean
     public AmazonS3 client() {
         BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessId, accessKey);
