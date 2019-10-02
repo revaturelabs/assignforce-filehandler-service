@@ -1,4 +1,4 @@
-package com.example.swagger;
+package com.revature.assignforce.assignforcefilehandler.swagger;
 
 import java.util.Collections;
 import org.springframework.context.annotation.Bean;
