@@ -87,17 +87,17 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		<!-- Swagger -->
-			<dependency>
-				<groupId>io.springfox</groupId>
-				<artifactId>springfox-swagger2</artifactId>
-				<version>2.9.2</version>
-			</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.9.2</version>
+		</dependency>
 
-			<dependency>
-				<groupId>io.springfox</groupId>
-				<artifactId>springfox-swagger-ui</artifactId>
-				<version>2.4.0</version>
-			</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.4.0</version>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
@@ -114,73 +114,108 @@
 
 	<build>
 		<finalName>filehandler-service</finalName>
-		<plugins>
-			<!-- Sonar Scanner -->
-			<plugin>
-				<groupId>org.sonarsource.scanner.maven</groupId>
-				<artifactId>sonar-maven-plugin</artifactId>
-				<version>3.6.0.1398</version>
-				<executions>
-					<execution>
-						<phase>verify</phase>
-						<goals>
-							<goal>sonar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+			<plugins>
+				<!-- Sonar Scanner -->
+				<plugin>
+					<groupId>org.sonarsource.scanner.maven</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>3.6.0.1398</version>
+					<executions>
+						<execution>
+							<phase>verify</phase>
+							<goals>
+								<goal>sonar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 
-			<!-- JaCoCo -->
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.9</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>report</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-						<configuration>
-							<destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
-							<propertyName>surefireArgLine</propertyName>
-						</configuration>
-					</execution>
-					<execution>
-						<id>post-unit-test</id>
-						<phase>test</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-						<configuration>
-							<dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
-							<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<mainClass>com.revature.assignforce.assignforcefilehandler.AssignForceFilehandlerServiceApplication</mainClass>
-					<addResources>true</addResources>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
+				<!-- JaCoCo -->
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>0.7.9</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>prepare-agent</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>report</id>
+							<phase>prepare-package</phase>
+							<goals>
+								<goal>report</goal>
+							</goals>
+							<configuration>
+								<destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
+								<propertyName>surefireArgLine</propertyName>
+							</configuration>
+						</execution>
+						<execution>
+							<id>post-unit-test</id>
+							<phase>test</phase>
+							<goals>
+								<goal>report</goal>
+							</goals>
+							<configuration>
+								<dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
+								<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+					<configuration>
+						<mainClass>com.revature.assignforce.assignforcefilehandler.AssignForceFilehandlerServiceApplication</mainClass>
+						<addResources>true</addResources>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>repackage</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<!-- https://mvnrepository.com/artifact/com.github.kongchen/swagger-maven-plugin -->
+				<plugin>
+					<groupId>com.github.kongchen</groupId>
+					<artifactId>swagger-maven-plugin</artifactId>
+					<version>3.1.5</version>
+					<configuration>
+						<apiSources>
+							<apiSource>
+								<schemes>http,https</schemes>
+								<basePath>/api/filehandler-service</basePath>
+								<locations>
+									<location>com.revature.assignforce.assignforcefilehandler.controller</location>
+								</locations>
+								<info>
+									<title>${project.name}</title>
+									<description>Handles the connection with AWS:S3</description>
+									<contact>
+										<name>August Duet
+										</name>
+										<email>august@revature.com</email>
+									</contact>
+									 <version>${project.version}</version>
+								</info>
+								<swaggerApiReader>com.github.kongchen.swagger.docgen.reader.SpringMvcApiReader</swaggerApiReader>
+								<swaggerDirectory>${project.build.directory}/swagger-ui</swaggerDirectory>
+								<!-- Do not use: swaggerFileName, as it will be used as classifier. 
+									In a multi-module project will have different classifier for different APIs -->
+								<outputFormats>json</outputFormats>
+								<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							</apiSource>
+						</apiSources>
+					</configuration>
+					<!-- <executions> <execution> <phase>compile</phase> <goals> <goal>generate</goal> 
+					</goals> </execution> </executions> -->
+				</plugin>
+			</plugins>
 	</build>
 
 </project>
