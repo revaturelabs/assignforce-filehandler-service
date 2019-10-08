@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +19,11 @@ import java.io.IOException;
  *
  */
 @Service
+/*
+ *Either an SVP of technology or a trainer 
+ *can have access to these methods. 
+ */
+//@PreAuthorize("hasRole('SVP') or hasRole('Trainer')")
 public class FileService {
 
 	private AmazonS3 client;
