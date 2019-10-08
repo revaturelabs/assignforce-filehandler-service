@@ -32,7 +32,7 @@ public class S3Config {
 
     /**
      * Returns an S3 client in order to handle files.
-     * @return
+     * @return  Returns AmazonS3
      */
     @Bean
     public AmazonS3 client() {

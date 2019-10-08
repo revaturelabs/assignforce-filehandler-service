@@ -40,10 +40,11 @@ public class FileService {
 	 * Creates key from file metadata, uploads file to S3 with generated key. If
 	 * successful upload, return key.
 	 * 
-	 * @param file
-	 * @param category
-	 * @param trainer_id
-	 * @return
+	 * @param file 			The file to be saved
+	 * @param category 		The category of the file to be saved
+	 * @param trainer_id    The trainer id who will save the file
+	 * @return				The name of the key saved
+	 * @throws java.io.IOException		Exception when save fails
 	 */
 	public String save(MultipartFile file, String category, int trainer_id) throws IOException {
 
@@ -67,8 +68,8 @@ public class FileService {
 	/**
 	 * Retrieves a file from AWS:S3 bucket based on key.
 	 * 
-	 * @param key
-	 * @return
+	 * @param key Name of the file
+	 * @return 	  The S3 object
 	 */
 	public S3Object get(String key) {
 		try {
@@ -81,8 +82,8 @@ public class FileService {
 	/**
 	 * Deletes a file from AWS:S3 bucket based on key.
 	 * 
-	 * @param key
-	 * @return
+	 * @param key	Name of the file
+	 * @return		Whether file is deleted or not
 	 */
 	public boolean delete(String key) {
 		try {
