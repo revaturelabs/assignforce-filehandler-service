@@ -10,8 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.SwaggerDefinition;
-import io.swagger.annotations.Tag;
 
 /**
  * Controller for handling Files, and depositing them into AWS:S3.
@@ -20,8 +18,7 @@ import io.swagger.annotations.Tag;
  *
  */
 @RestController
-@Api(value = "/api/filehandler", tags = "{controllerTags}")
-@SwaggerDefinition(tags = @Tag(name = "controllerTags", description = "Controller for handling Files, and depositing them into AWS:S3."))
+@Api(value = "/api/filehandler", tags = { "Filehandler Controller"})
 public class FileController {
 
 	private FileService fileService;
